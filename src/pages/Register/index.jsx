@@ -1,9 +1,78 @@
+import { useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
+import { auth } from '../../services/firebase';
+
 import './style.css';
 
 export default function Register() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    async function userRegister() {
+        if (!error) {
+            await createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    console.log('Cadastrado com sucesso');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    if (error.code === 'auth/weak-password') {
+                        setError('A senha deve conter 6 ou mais caracteres.');
+                    } else if (error.code === 'auth/email-already-in-use') {
+                        setError('Email já existe.');
+                    } else if (error.code === 'auth/invalid-email') {
+                        setError('Formato de email inválido.');
+                    } else if (
+                        error.code === 'missing-password' ||
+                        error.code === 'missing-email'
+                    ) {
+                        setError('Todos os campos são obrigátórios.');
+                    }
+                });
+        } else {
+            setError('Todos os campos são obrigátórios.');
+        }
+    }
+
+    function verifyPassword() {
+        if (password.length < 6) {
+            setError('A senha deve conter 6 ou mais caracteres.');
+        } else {
+            setError('');
+        }
+    }
+
+    function verifyEmail() {}
+
     return (
-        <div>
+        <div className="register">
             <h1>Registro</h1>
+            <div>
+                <label>Email: </label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                    }}
+                    placeholder="Digite seu email..."
+                />
+                <label>Senha: </label>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                    onBlur={verifyPassword}
+                    placeholder="Digite sua senha..."
+                />
+                <input type="checkbox" />
+                {error && <span>{error}</span>}
+                <button onClick={userRegister}>Cadastrar</button>
+            </div>
         </div>
     );
 }
