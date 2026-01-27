@@ -1,0 +1,21 @@
+{
+    "name": "template-react",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "firebase": "^12.8.0",
+        "react": "^19.2.3",
+        "react-dom": "^19.2.3",
+        "react-router-dom": "^7.13.0"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^5.1.2",
+        "vite": "^7.3.1"
+    }
+}
