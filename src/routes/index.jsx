@@ -4,10 +4,12 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import Private from './Private';
 import Admin from '../pages/Admin';
+import Header from '../components/Header/Index';
 
 export default function RoutesApp() {
     return (
         <BrowserRouter>
+            <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Register />} />

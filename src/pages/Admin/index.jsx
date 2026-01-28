@@ -30,9 +30,13 @@ export default function Admin() {
         },
     ]);
 
+    useEffect(() => {
+        console.log(user);
+        console.log(loading);
+    });
+
     return (
         <div>
-            <HeaderAdmin />
             <h1>Minhas tarefas</h1>
             <div>
                 <div>
