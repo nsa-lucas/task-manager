@@ -1,80 +1,202 @@
 import { useEffect, useState } from 'react';
+import {
+    addDoc,
+    doc,
+    deleteDoc,
+    onSnapshot,
+    collection,
+    where,
+    orderBy,
+    query,
+    updateDoc,
+} from 'firebase/firestore';
 
-import { auth } from '../../services/firebase';
+import { db } from '../../services/firebase.js';
 import useAuth from '../../auth/useAuth.js';
-import HeaderAdmin from '../../components/HeaderAdmin/Index';
 
 export default function Admin() {
-    const { user, loading } = useAuth();
-    const [task, setTask] = useState('');
-    const [tasks, setTasks] = useState([
-        {
-            name: 'tarefa 1',
-            status: 'pendente',
-        },
-        {
-            name: 'tarefa 1',
-            status: 'pendente',
-        },
-        {
-            name: 'tarefa 1',
-            status: 'pendente',
-        },
-        {
-            name: 'tarefa 1',
-            status: 'pendente',
-        },
-        {
-            name: 'tarefa 1',
-            status: 'pendente',
-        },
-    ]);
+    const { user } = useAuth();
+    const [tasks, setTasks] = useState([]);
+
+    const [taskTitle, setTaskTitle] = useState('');
+    const [idTask, setIdTask] = useState('');
 
     useEffect(() => {
         console.log(user);
-        console.log(loading);
-    });
+        async function loadTasks() {
+            const tasksRef = collection(db, 'tasks');
+
+            const q = query(
+                tasksRef,
+                orderBy('created_at', 'desc'),
+                where('user_id', '==', user.uid),
+            );
+
+            const unsub = onSnapshot(q, (snapshot) => {
+                let task_list = [];
+
+                snapshot.forEach((doc) => {
+                    task_list.push({
+                        id: doc.id,
+                        title: doc.data().title,
+                        status: doc.data().status,
+                    });
+                });
+
+                setTasks(task_list);
+            });
+        }
+
+        loadTasks();
+    }, []);
+
+    async function addTask() {
+        if (taskTitle.length === 0) {
+            console.log('Preencha corretamente');
+        } else {
+            await addDoc(collection(db, 'tasks'), {
+                title: taskTitle,
+                user_id: user.uid,
+                status: 'Pendente',
+                created_at: new Date(),
+            })
+                .then(() => {
+                    console.log('Tarefa registrada');
+                    setTaskTitle('');
+                })
+                .catch((error) => {
+                    console.log('Error ao registrar tarefa' + error);
+                });
+        }
+    }
+
+    async function deleteTask(id) {
+        const taskRef = doc(db, 'tasks', id);
+
+        await deleteDoc(taskRef).then(() => {
+            console.log('tarefa deletada');
+        });
+    }
+
+    async function completeTask(id, status) {
+        const taskRef = doc(db, 'tasks', id);
+
+        await updateDoc(taskRef, {
+            status: status,
+        })
+            .then(() => {
+                console.log('Status alterado.');
+            })
+            .catch((error) => {
+                console.log('Erro ao alterar tarefa' + error);
+            });
+    }
+
+    async function updateTaskTitle() {
+        const taskRef = doc(db, 'tasks', idTask);
+
+        await updateDoc(taskRef, {
+            title: taskTitle,
+        })
+            .then(() => {
+                console.log('Status alterado.');
+            })
+            .catch((error) => {
+                console.log('Erro ao alterar tarefa' + error);
+            });
+    }
 
     return (
         <div>
             <h1>Minhas tarefas</h1>
             <div>
                 <div>
-                    <input
+                    <textarea
                         type="text"
-                        value={task}
+                        value={taskTitle}
                         onChange={(e) => {
-                            setTask(e.target.value);
+                            setTaskTitle(e.target.value);
                         }}
+                        placeholder="Digite o nome da tarefa..."
                     />
                     <button
                         onClick={() => {
-                            const newTask = {
-                                name: task,
-                                status: 'pendente',
-                            };
-
-                            setTasks([...tasks, newTask]);
-                            setTask('');
+                            idTask != '' ? updateTaskTitle(idTask) : addTask();
                         }}
                     >
-                        Adicionar
+                        Salvar
                     </button>
+                    {idTask != '' && (
+                        <button
+                            onClick={() => {
+                                setTaskTitle('');
+                                setIdTask('');
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    )}
                 </div>
                 {tasks.length === 0 ? (
                     <h4>Nenhuma tarefa adicionada.</h4>
                 ) : (
-                    tasks.map((task, index) => {
-                        return (
-                            <li key={index}>
-                                <span>{task.name}</span>
-
-                                <span>{task.status}</span>
-
-                                <button>Alterar</button>
-                            </li>
-                        );
-                    })
+                    <>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarefa</th>
+                                    <th>Status</th>
+                                    <th>Concluir</th>
+                                    <th>Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tasks.map((t) => {
+                                    return (
+                                        <tr key={t.id}>
+                                            <td
+                                                onDoubleClick={() => {
+                                                    setTaskTitle(t.title);
+                                                    setIdTask(t.id);
+                                                }}
+                                            >
+                                                {t.title}
+                                            </td>
+                                            <td>{t.status}</td>
+                                            <td>
+                                                <button
+                                                    onClick={() => {
+                                                        t.status === 'Pendente'
+                                                            ? completeTask(
+                                                                  t.id,
+                                                                  'Concluída',
+                                                              )
+                                                            : completeTask(
+                                                                  t.id,
+                                                                  'Pendente',
+                                                              );
+                                                    }}
+                                                >
+                                                    {t.status === 'Pendente'
+                                                        ? 'Concluir'
+                                                        : 'Desfazer'}
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    onClick={() => {
+                                                        deleteTask(t.id);
+                                                    }}
+                                                >
+                                                    Excluir
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </>
                 )}
             </div>
         </div>

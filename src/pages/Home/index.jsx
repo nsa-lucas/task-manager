@@ -1,5 +1,3 @@
-import Header from '../../components/Header/Index';
-
 import './style.css';
 
 export default function Home() {
