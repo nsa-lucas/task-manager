@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
     addDoc,
     doc,
-    deleteDoc,
     onSnapshot,
     collection,
     where,
@@ -20,12 +19,10 @@ export default function Admin() {
     const [tasks, setTasks] = useState([]);
 
     const [taskTitle, setTaskTitle] = useState('');
-    const [idTask, setIdTask] = useState('');
-
+    const [idUpdateTask, setIdUpdateTask] = useState('');
     const [idDeleteTasks, setIdDeleteTasks] = useState([]);
 
     useEffect(() => {
-        console.log(user);
         async function loadTasks() {
             const tasksRef = collection(db, 'tasks');
 
@@ -88,13 +85,15 @@ export default function Admin() {
     }
 
     async function updateTaskTitle() {
-        const taskRef = doc(db, 'tasks', idTask);
+        const taskRef = doc(db, 'tasks', idUpdateTask);
 
         await updateDoc(taskRef, {
             title: taskTitle,
         })
             .then(() => {
-                console.log('Status alterado.');
+                console.log('Titulo da tarefa alterado.');
+                setIdUpdateTask('');
+                setTaskTitle('');
             })
             .catch((error) => {
                 console.log('Erro ao alterar tarefa' + error);
@@ -111,6 +110,16 @@ export default function Admin() {
             .commit()
             .then(() => {
                 console.log('Tarefas deletas com sucesso.');
+                setIdDeleteTasks([]);
+
+                console.log(idDeleteTasks);
+
+                if (idUpdateTask != '') {
+                    setIdUpdateTask('');
+                }
+                if (taskTitle != '') {
+                    setTaskTitle('');
+                }
             })
             .catch((error) => {
                 console.log('Falha ao deletar' + error);
@@ -120,10 +129,8 @@ export default function Admin() {
     function tasksCheckedToDelete(id) {
         setIdDeleteTasks((prev) => {
             if (prev.includes(id)) {
-                // desmarcou → remove
                 return prev.filter((taskId) => taskId !== id);
             } else {
-                // marcou → adiciona
                 return [...prev, id];
             }
         });
@@ -144,16 +151,18 @@ export default function Admin() {
                     />
                     <button
                         onClick={() => {
-                            idTask != '' ? updateTaskTitle(idTask) : addTask();
+                            idUpdateTask != ''
+                                ? updateTaskTitle(idUpdateTask)
+                                : addTask();
                         }}
                     >
                         Salvar
                     </button>
-                    {idTask != '' && (
+                    {idUpdateTask != '' && (
                         <button
                             onClick={() => {
                                 setTaskTitle('');
-                                setIdTask('');
+                                setIdUpdateTask('');
                             }}
                         >
                             Cancelar
@@ -187,9 +196,11 @@ export default function Admin() {
                                                 />
                                             </td>
                                             <td
+                                                className="taskTitle"
+                                                type="text"
                                                 onDoubleClick={() => {
                                                     setTaskTitle(t.title);
-                                                    setIdTask(t.id);
+                                                    setIdUpdateTask(t.id);
                                                 }}
                                             >
                                                 {t.title}
@@ -214,7 +225,9 @@ export default function Admin() {
                                 })}
                             </tbody>
                         </table>
-                        <button onClick={deleteTasksById}>Deletar</button>
+                        <button onClick={deleteTasksById}>
+                            Deletar seleções
+                        </button>
                     </>
                 )}
             </div>
