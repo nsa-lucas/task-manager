@@ -29,11 +29,11 @@ Task Manager é um organizador de tarefas diárias.
 - [x] Página de login;
 - [x] Controle de rotas autenticadas;
 - [x] Implementação de um provider para verificar e armazenar sessão de usuário;
-- [ ] Cadastro de tarefas
-- [ ] Listagem de tarefas
-- [ ] Deletar tarefas
-- [ ] Atualizar nome da tarefa
-- [ ] Atualizar status da tarefa (concluído ou pendente)
+- [x] Cadastro de tarefas
+- [x] Listagem de tarefas
+- [x] Deletar tarefas
+- [x] Atualizar nome da tarefa
+- [x] Atualizar status da tarefa (concluído ou pendente)
 
 ## 🔖 Layout
 
