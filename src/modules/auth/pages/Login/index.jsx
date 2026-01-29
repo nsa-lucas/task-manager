@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../services/firebase';
+import { auth } from '@/firebase/config';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 
 import './style.css';
@@ -15,7 +15,7 @@ export default function Login() {
     async function handleLogin() {
         await signInWithEmailAndPassword(auth, email, password)
             .then(() => {
-                navigate('/admin', { replace: true });
+                navigate('/dashboard', { replace: true });
             })
             .catch((error) => {
                 if (error.code === 'auth/invalid-credential') {

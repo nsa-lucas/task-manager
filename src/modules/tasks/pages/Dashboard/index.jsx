@@ -11,10 +11,10 @@ import {
     writeBatch,
 } from 'firebase/firestore';
 
-import { db } from '../../services/firebase.js';
-import useAuth from '../../auth/useAuth.js';
+import { db } from '@/firebase/config.js';
+import useAuth from '@modules/auth/hooks/useAuth.js';
 
-export default function Admin() {
+export default function Dashboard() {
     const { user } = useAuth();
     const [tasks, setTasks] = useState([]);
 

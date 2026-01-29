@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
 
-import App from './App.jsx';
+import App from '@/app/App.jsx';
 import './index.css';
-import { AuthProvider } from './auth/AuthProvider.jsx';
+import { AuthProvider } from '@modules/auth/context/AuthProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

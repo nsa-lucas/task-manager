@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-import { auth } from '../../services/firebase';
+import { auth } from '@/firebase/config';
 
 import './style.css';
 
@@ -43,8 +43,6 @@ export default function Register() {
             setError('');
         }
     }
-
-    function verifyEmail() {}
 
     return (
         <div className="register">
