@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '@/firebase/config';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
+
+import { signIn } from '@modules/auth/services/auth.services';
 
 import './style.css';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,13 +13,15 @@ export default function Login() {
     const navigate = useNavigate();
 
     async function handleLogin() {
-        await signInWithEmailAndPassword(auth, email, password)
+        await signIn(email, password)
             .then(() => {
                 navigate('/dashboard', { replace: true });
             })
             .catch((error) => {
                 if (error.code === 'auth/invalid-credential') {
                     setError('Email ou senha incorretos.');
+                } else if (error.code === 'auth/invalid-email') {
+                    setError('Formato de email inválido.');
                 } else {
                     console.log(error);
                 }

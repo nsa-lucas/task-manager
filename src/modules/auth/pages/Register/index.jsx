@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
-import { auth } from '@/firebase/config';
-
+import { register } from '@modules/auth/services/auth.services';
 import './style.css';
 
 export default function Register() {
@@ -10,14 +9,16 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    const navigate = useNavigate();
+
     async function userRegister() {
         if (!error) {
-            await createUserWithEmailAndPassword(auth, email, password)
+            await register(email, password)
                 .then(() => {
                     console.log('Cadastrado com sucesso');
+                    navigate('/dashboard', { replace: true });
                 })
                 .catch((error) => {
-                    console.log(error);
                     if (error.code === 'auth/weak-password') {
                         setError('A senha deve conter 6 ou mais caracteres.');
                     } else if (error.code === 'auth/email-already-in-use') {
@@ -29,6 +30,8 @@ export default function Register() {
                         error.code === 'missing-email'
                     ) {
                         setError('Todos os campos são obrigátórios.');
+                    } else {
+                        console.log(error);
                     }
                 });
         } else {
