@@ -9,6 +9,7 @@ import {
     orderBy,
     query,
     updateDoc,
+    writeBatch,
 } from 'firebase/firestore';
 
 import { db } from '../../services/firebase.js';
@@ -20,6 +21,8 @@ export default function Admin() {
 
     const [taskTitle, setTaskTitle] = useState('');
     const [idTask, setIdTask] = useState('');
+
+    const [idDeleteTasks, setIdDeleteTasks] = useState([]);
 
     useEffect(() => {
         console.log(user);
@@ -70,14 +73,6 @@ export default function Admin() {
         }
     }
 
-    async function deleteTask(id) {
-        const taskRef = doc(db, 'tasks', id);
-
-        await deleteDoc(taskRef).then(() => {
-            console.log('tarefa deletada');
-        });
-    }
-
     async function completeTask(id, status) {
         const taskRef = doc(db, 'tasks', id);
 
@@ -104,6 +99,34 @@ export default function Admin() {
             .catch((error) => {
                 console.log('Erro ao alterar tarefa' + error);
             });
+    }
+
+    async function deleteTasksById() {
+        const batch = writeBatch(db);
+        idDeleteTasks.forEach((id) => {
+            const ref = doc(db, 'tasks', id);
+            batch.delete(ref);
+        });
+        await batch
+            .commit()
+            .then(() => {
+                console.log('Tarefas deletas com sucesso.');
+            })
+            .catch((error) => {
+                console.log('Falha ao deletar' + error);
+            });
+    }
+
+    function tasksCheckedToDelete(id) {
+        setIdDeleteTasks((prev) => {
+            if (prev.includes(id)) {
+                // desmarcou → remove
+                return prev.filter((taskId) => taskId !== id);
+            } else {
+                // marcou → adiciona
+                return [...prev, id];
+            }
+        });
     }
 
     return (
@@ -144,16 +167,25 @@ export default function Admin() {
                         <table>
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Tarefa</th>
                                     <th>Status</th>
-                                    <th>Concluir</th>
-                                    <th>Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {tasks.map((t) => {
                                     return (
                                         <tr key={t.id}>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    onChange={() => {
+                                                        tasksCheckedToDelete(
+                                                            t.id,
+                                                        );
+                                                    }}
+                                                />
+                                            </td>
                                             <td
                                                 onDoubleClick={() => {
                                                     setTaskTitle(t.title);
@@ -162,40 +194,27 @@ export default function Admin() {
                                             >
                                                 {t.title}
                                             </td>
-                                            <td>{t.status}</td>
-                                            <td>
-                                                <button
-                                                    onClick={() => {
-                                                        t.status === 'Pendente'
-                                                            ? completeTask(
-                                                                  t.id,
-                                                                  'Concluída',
-                                                              )
-                                                            : completeTask(
-                                                                  t.id,
-                                                                  'Pendente',
-                                                              );
-                                                    }}
-                                                >
-                                                    {t.status === 'Pendente'
-                                                        ? 'Concluir'
-                                                        : 'Desfazer'}
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    onClick={() => {
-                                                        deleteTask(t.id);
-                                                    }}
-                                                >
-                                                    Excluir
-                                                </button>
+                                            <td
+                                                onDoubleClick={() => {
+                                                    t.status === 'Pendente'
+                                                        ? completeTask(
+                                                              t.id,
+                                                              'Concluída',
+                                                          )
+                                                        : completeTask(
+                                                              t.id,
+                                                              'Pendente',
+                                                          );
+                                                }}
+                                            >
+                                                {t.status}
                                             </td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
+                        <button onClick={deleteTasksById}>Deletar</button>
                     </>
                 )}
             </div>
