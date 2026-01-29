@@ -9,14 +9,13 @@ export default function TaskForm({ editingTask, onSubmit }) {
     useEffect(() => {
         if (editingTask) {
             setTitle(editingTask.title);
-        } else {
-            setTitle('');
         }
     }, [editingTask]);
 
     function handleSubmit(e) {
         e.preventDefault();
         onSubmit(title);
+        setTitle('');
     }
 
     return (
