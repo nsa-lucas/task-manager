@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { register } from '@modules/auth/services/auth.services';
 import './style.css';
@@ -15,8 +16,11 @@ export default function Register() {
         if (!error) {
             await register(email, password)
                 .then(() => {
-                    console.log('Cadastrado com sucesso');
-                    navigate('/dashboard', { replace: true });
+                    toast.success('Cadastrado com sucesso', {
+                        onClose: () => {
+                            navigate('/dashboard', { replace: true });
+                        },
+                    });
                 })
                 .catch((error) => {
                     if (error.code === 'auth/weak-password') {

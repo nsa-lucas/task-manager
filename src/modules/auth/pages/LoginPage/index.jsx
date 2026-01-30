@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { signIn } from '@modules/auth/services/auth.services';
 
 import './style.css';
-import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -15,7 +16,12 @@ export default function LoginPage() {
     async function handleLogin() {
         await signIn(email, password)
             .then(() => {
-                navigate('/dashboard', { replace: true });
+                toast.success('Logado com sucesso.', {
+                    autoClose: 1500,
+                    onClose: () => {
+                        navigate('/dashboard', { replace: true });
+                    },
+                });
             })
             .catch((error) => {
                 if (error.code === 'auth/invalid-credential') {

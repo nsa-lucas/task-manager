@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import useAuth from '@modules/auth/hooks/useAuth.js';
 import TasksList from '@modules/tasks/components/TasksList';
-import TaskForm from '../../components/TaskForm';
+import TaskForm from '@modules/tasks/components/TaskForm';
 import {
     updateTitle,
     createTask,
@@ -20,19 +21,20 @@ export default function Dashboard() {
         if (editingTask) {
             await updateTitle(editingTask.id, title)
                 .then(() => {
-                    console.log('Titulo da tarefa alterado.');
+                    toast.success('Titulo da tarefa alterado.');
                     setEditingTask(null);
                 })
                 .catch((error) => {
-                    console.log('Erro ao alterar tarefa' + error);
+                    toast.warn('Erro ao alterar tarefa.');
+                    console.log(error);
                 });
         } else {
             await createTask(user.uid, title)
                 .then(() => {
-                    console.log('Tarefa registrada');
+                    toast.success('Tarefa registrada com sucesso.');
                 })
                 .catch((error) => {
-                    console.log('Error ao registrar tarefa' + error);
+                    toast.warn('Falha ao registrar tarefa.');
                 });
         }
     }

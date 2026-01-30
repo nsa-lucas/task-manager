@@ -1,13 +1,15 @@
+import { toast } from 'react-toastify';
 import { updateStatus } from '@modules/tasks/services/tasks.services';
 
 export default function TaskItem({ onEdit, task, checked, onToggle }) {
     async function handleStatus(id, status) {
         await updateStatus(id, status)
             .then(() => {
-                console.log('Status alterado.');
+                toast.success('Status alterado.');
             })
             .catch((error) => {
-                console.log('Erro ao alterar tarefa' + error);
+                console.log(error);
+                toast.warn('Falha ao alterar status.');
             });
     }
 

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+
 import useAuth from '@modules/auth/hooks/useAuth.js';
 import { getTasks } from '@modules/tasks/services/tasks.services';
-import { deleteTasksById } from '../../services/tasks.services';
+import { deleteTasksById } from '@modules/tasks/services/tasks.services';
 import TaskItem from '../TaskItem';
 
 export default function TasksList({ onEdit }) {
@@ -21,11 +23,12 @@ export default function TasksList({ onEdit }) {
     async function deleteTasks() {
         await deleteTasksById(selectedIds)
             .then(() => {
-                console.log('Tarefas deletas com sucesso.');
+                toast.success('Tarefas deletadas com sucesso.');
                 setSelectedIds([]);
             })
             .catch((error) => {
-                console.log('Falha ao deletar' + error);
+                toast.warn('Falha ao deletar tarefas.');
+                console.log(error);
             });
     }
 
