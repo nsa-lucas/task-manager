@@ -20,7 +20,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     async function handleLogin() {
-        if (!error && email.length != 0 && password.length > 6) {
+        if (!error && email.length != 0 && password.length >= 6) {
             await signIn(email, password)
                 .then(() => {
                     toast.success('Logado com sucesso.', {
