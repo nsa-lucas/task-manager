@@ -9,21 +9,37 @@ import Header from '@shared/components/Header/Index';
 export default function RoutesApp() {
     return (
         <BrowserRouter>
-            <Header />
             <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route
+                    path="/"
+                    element={
+                        <>
+                            <Header />
+                            <HomePage />
+                        </>
+                    }
+                />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route
                     path="/dashboard"
                     element={
                         <Private>
+                            <Header />
                             <Dashboard />
                         </Private>
                     }
                 />
 
-                <Route path="*" element={<HomePage />} />
+                <Route
+                    path="*"
+                    element={
+                        <>
+                            <Header />
+                            <HomePage />
+                        </>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );

@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Save, X } from 'lucide-react';
 
 import PrimaryButton from '@/shared/components/PrimaryButton';
-import './style.css';
 import { toast } from 'react-toastify';
-import CancelButton from '../CancelButton';
+import SecondaryButton from '../SecondaryButton';
 
 export default function TaskForm({ editingTask, onSubmit, onCancel }) {
     const [title, setTitle] = useState('');
@@ -31,7 +30,9 @@ export default function TaskForm({ editingTask, onSubmit, onCancel }) {
         <form className="taskForm" onSubmit={handleSubmit}>
             <label>Nova tarefa:</label>
             <div className="input">
-                {editingTask && <CancelButton onCancel={onCancel} />}
+                {editingTask && (
+                    <SecondaryButton onCancel={onCancel} icon={<X />} />
+                )}
                 <textarea
                     className="input-task"
                     type="text"

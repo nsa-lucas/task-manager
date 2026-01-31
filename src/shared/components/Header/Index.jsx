@@ -1,37 +1,59 @@
 import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 
-import { auth } from '@/firebase/config.js';
-import useAuth from '@modules/auth/hooks/useAuth.js';
+import { LogIn, LogOut, ListChecks, UserPlus } from 'lucide-react';
 
-import './style.css';
+import useAuth from '@modules/auth/hooks/useAuth.js';
+import { auth } from '@/firebase/config.js';
+
+import logoImg from '../../../assets/logo.svg';
+import { Container, Content } from './style';
 
 export default function Header() {
     const { user } = useAuth();
 
     return (
-        <header>
-            {user ? (
-                <>
-                    <h1>Admin</h1>
-                    <Link to="/">Inicio</Link>
-                    <Link to="/dashboard">Painel de controle</Link>
-                    <button
-                        onClick={async () => {
-                            await signOut(auth);
-                        }}
-                    >
-                        logout
-                    </button>
-                </>
-            ) : (
-                <>
-                    <h1>Task Manager</h1>
-                    <Link to="/">Inicio</Link>
-                    <Link to="/login">Entrar</Link>
-                    <Link to="/register">Registrar</Link>
-                </>
-            )}
-        </header>
+        <Container>
+            <Content>
+                {user ? (
+                    <>
+                        <Link to="/">
+                            <img src={logoImg} alt="TasKlife" />
+                        </Link>
+
+                        <nav>
+                            <Link to="/dashboard">
+                                <ListChecks size={28} strokeWidth={2} />
+                                minhas tarefas
+                            </Link>
+                            <Link
+                                onClick={() => {
+                                    signOut(auth);
+                                }}
+                            >
+                                <LogOut size={28} strokeWidth={2} />
+                                sair
+                            </Link>
+                        </nav>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/">
+                            <img src={logoImg} alt="TasKlife" />
+                        </Link>
+                        <nav>
+                            <Link to="/login">
+                                <LogIn size={28} strokeWidth={2} />
+                                entrar
+                            </Link>
+                            <Link to="/register">
+                                <UserPlus size={28} strokeWidth={2} />
+                                registrar
+                            </Link>
+                        </nav>
+                    </>
+                )}
+            </Content>
+        </Container>
     );
 }

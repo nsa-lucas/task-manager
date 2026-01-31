@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Trash2 } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
 
 import useAuth from '@modules/auth/hooks/useAuth.js';
 import {
@@ -10,11 +10,9 @@ import {
 } from '@modules/tasks/services/tasks.services';
 
 import SecondayButton from '../SecondaryButton';
-import CancelButton from '../CancelButton';
+import { Container } from './styles';
 
-import './style.css';
-
-export default function TasksList({ onEdit }) {
+export default function TasksTable({ onEdit }) {
     const { user } = useAuth();
     const [tasks, setTasks] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -63,16 +61,17 @@ export default function TasksList({ onEdit }) {
 
     return (
         tasks.length != 0 && (
-            <>
+            <Container>
                 <table className="task-list">
                     <thead>
                         <tr>
                             <th className="uncheck">
                                 {selectedIds.length > 0 && (
-                                    <CancelButton
-                                        onCancel={() => {
+                                    <SecondayButton
+                                        onClick={() => {
                                             setSelectedIds('');
                                         }}
+                                        icon={<X />}
                                     />
                                 )}
                             </th>
@@ -82,16 +81,6 @@ export default function TasksList({ onEdit }) {
                     </thead>
                     <tbody>
                         {tasks.map((task) => {
-                            // return (
-                            //     <TaskItem
-                            //         key={task.id}
-                            //         task={task}
-                            //         checked={selectedIds.includes(task.id)}
-                            //         onToggle={toggleTaskSelection}
-                            //         onEdit={onEdit}
-                            //     />
-                            // );
-
                             return (
                                 <tr key={task.id}>
                                     <td>
@@ -139,7 +128,7 @@ export default function TasksList({ onEdit }) {
                         icon={<Trash2 />}
                     />
                 )}
-            </>
+            </Container>
         )
     );
 }

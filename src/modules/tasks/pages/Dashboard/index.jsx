@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import useAuth from '@modules/auth/hooks/useAuth.js';
-import TasksList from '@modules/tasks/components/TasksList';
+import TasksTable from '@modules/tasks/components/TasksTable';
 import TaskForm from '@modules/tasks/components/TaskForm';
 import {
     updateTitle,
     createTask,
 } from '@modules/tasks/services/tasks.services';
-
-import './style.css';
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -37,6 +35,7 @@ export default function Dashboard() {
                 })
                 .catch((error) => {
                     toast.warn('Falha ao registrar tarefa.');
+                    console.log(error);
                 });
         }
     }
@@ -44,12 +43,12 @@ export default function Dashboard() {
     return (
         <div className="dashboard">
             <div>
-                <TaskForm
+                {/* <TaskForm
                     editingTask={editingTask}
                     onSubmit={handleSaveTask}
                     onCancel={() => setEditingTask(null)}
                 />
-                <TasksList onEdit={handleEditTask} />
+                <TasksTable onEdit={handleEditTask} /> */}
             </div>
         </div>
     );
