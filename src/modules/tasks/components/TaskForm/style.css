@@ -1,0 +1,31 @@
+.taskForm {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+        margin-left: 10px;
+    }
+
+    .input {
+        position: relative;
+        display: flex;
+
+        z-index: 3;
+
+        .input-task {
+            width: 100%;
+            resize: none;
+            padding: 6px 12px;
+            height: 56px;
+
+            border: 1px solid gray;
+            border-radius: 4px;
+
+            &:focus {
+                outline: none;
+                box-shadow: 0px 0px 5px 0px rgba(138, 43, 226, 0.85);
+            }
+        }
+    }
+}

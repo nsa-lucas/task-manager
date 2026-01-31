@@ -9,6 +9,8 @@ import {
     createTask,
 } from '@modules/tasks/services/tasks.services';
 
+import './style.css';
+
 export default function Dashboard() {
     const { user } = useAuth();
     const [editingTask, setEditingTask] = useState(null);
@@ -40,10 +42,13 @@ export default function Dashboard() {
     }
 
     return (
-        <div>
-            <h1>Minhas tarefas</h1>
+        <div className="dashboard">
             <div>
-                <TaskForm editingTask={editingTask} onSubmit={handleSaveTask} />
+                <TaskForm
+                    editingTask={editingTask}
+                    onSubmit={handleSaveTask}
+                    onCancel={() => setEditingTask(null)}
+                />
                 <TasksList onEdit={handleEditTask} />
             </div>
         </div>

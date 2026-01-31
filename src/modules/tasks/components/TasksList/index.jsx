@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Trash2 } from 'lucide-react';
 
 import useAuth from '@modules/auth/hooks/useAuth.js';
-import { getTasks } from '@modules/tasks/services/tasks.services';
-import { deleteTasksById } from '@modules/tasks/services/tasks.services';
-import TaskItem from '../TaskItem';
+import {
+    updateStatus,
+    getTasks,
+    deleteTasksById,
+} from '@modules/tasks/services/tasks.services';
+
+import SecondayButton from '../SecondaryButton';
+import CancelButton from '../CancelButton';
+
+import './style.css';
 
 export default function TasksList({ onEdit }) {
     const { user } = useAuth();
@@ -19,6 +27,17 @@ export default function TasksList({ onEdit }) {
 
         loadTasks();
     }, []);
+
+    async function handleStatus(id, status) {
+        await updateStatus(id, status)
+            .then(() => {
+                toast.success('Status alterado.');
+            })
+            .catch((error) => {
+                console.log(error);
+                toast.warn('Falha ao alterar status.');
+            });
+    }
 
     async function deleteTasks() {
         await deleteTasksById(selectedIds)
@@ -43,31 +62,84 @@ export default function TasksList({ onEdit }) {
     }
 
     return (
-        <>
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Tarefa</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tasks.map((task) => {
-                        return (
-                            <TaskItem
-                                key={task.id}
-                                task={task}
-                                checked={selectedIds.includes(task.id)}
-                                onToggle={toggleTaskSelection}
-                                onEdit={onEdit}
-                            />
-                        );
-                    })}
-                </tbody>
-            </table>
+        tasks.length != 0 && (
+            <>
+                <table className="task-list">
+                    <thead>
+                        <tr>
+                            <th className="uncheck">
+                                {selectedIds.length > 0 && (
+                                    <CancelButton
+                                        onCancel={() => {
+                                            setSelectedIds('');
+                                        }}
+                                    />
+                                )}
+                            </th>
+                            <th>Tarefa</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tasks.map((task) => {
+                            // return (
+                            //     <TaskItem
+                            //         key={task.id}
+                            //         task={task}
+                            //         checked={selectedIds.includes(task.id)}
+                            //         onToggle={toggleTaskSelection}
+                            //         onEdit={onEdit}
+                            //     />
+                            // );
 
-            {selectedIds != 0 && <button onClick={deleteTasks}>Deletar</button>}
-        </>
+                            return (
+                                <tr key={task.id}>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedIds.includes(
+                                                task.id,
+                                            )}
+                                            onChange={() => {
+                                                toggleTaskSelection(task.id);
+                                            }}
+                                        />
+                                    </td>
+                                    <td
+                                        className="taskTitle"
+                                        type="text"
+                                        onDoubleClick={() => onEdit(task)}
+                                    >
+                                        <span>{task.title}</span>
+                                    </td>
+                                    <td
+                                        onDoubleClick={() => {
+                                            task.status === 'Pendente'
+                                                ? handleStatus(
+                                                      task.id,
+                                                      'Concluída',
+                                                  )
+                                                : handleStatus(
+                                                      task.id,
+                                                      'Pendente',
+                                                  );
+                                        }}
+                                    >
+                                        <span>{task.status}</span>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                {selectedIds != 0 && (
+                    <SecondayButton
+                        onClick={deleteTasks}
+                        text={'deletar selecionados'}
+                        icon={<Trash2 />}
+                    />
+                )}
+            </>
+        )
     );
 }

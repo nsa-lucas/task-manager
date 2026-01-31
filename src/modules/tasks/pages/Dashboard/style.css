@@ -1,0 +1,14 @@
+.dashboard {
+    max-width: 560px;
+    width: 100%;
+
+    border-radius: 8px;
+
+    padding: 14px;
+    margin: 14px;
+
+    h2 {
+        color: #8a2be2;
+        text-align: center;
+    }
+}
