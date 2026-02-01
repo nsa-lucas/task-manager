@@ -73,10 +73,12 @@ export default function Register() {
                 </div>
             </Hero>
             <Content>
-                <Link className="return-home" to="/">
-                    <CircleChevronLeft />
-                </Link>
                 <Form>
+                    <div className="icon-home">
+                        <Link className="link-home" to="/">
+                            <CircleChevronLeft />
+                        </Link>
+                    </div>
                     <div className="h-form">
                         <h1>Cadastro</h1>
 

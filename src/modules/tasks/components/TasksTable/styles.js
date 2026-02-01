@@ -7,7 +7,14 @@ export const Container = styled.div`
         width: 100%;
         border-spacing: 0 0.5rem;
 
+        input[type='checkbox'] {
+            accent-color: var(--violet);
+            width: 18px;
+            height: 18px;
+        }
+
         th {
+            color: var(--text-title);
             font-weight: 400;
             padding: 1rem 2rem;
             text-align: left;
@@ -17,7 +24,21 @@ export const Container = styled.div`
         td {
             padding: 1rem 2rem;
             border: 0;
+            background: var(--shape);
+            color: var(--text-body);
             border-radius: 0.25rem;
+
+            &:last-child {
+                cursor: pointer;
+            }
+
+            &.pending {
+                color: var(--red);
+            }
+
+            &.completed {
+                color: var(--green);
+            }
         }
     }
 `;

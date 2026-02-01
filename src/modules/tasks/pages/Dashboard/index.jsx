@@ -9,6 +9,8 @@ import {
     createTask,
 } from '@modules/tasks/services/tasks.services';
 
+import { Container } from './style.js';
+
 export default function Dashboard() {
     const { user } = useAuth();
     const [editingTask, setEditingTask] = useState(null);
@@ -41,15 +43,13 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="dashboard">
-            <div>
-                {/* <TaskForm
-                    editingTask={editingTask}
-                    onSubmit={handleSaveTask}
-                    onCancel={() => setEditingTask(null)}
-                />
-                <TasksTable onEdit={handleEditTask} /> */}
-            </div>
-        </div>
+        <Container>
+            <TaskForm
+                editingTask={editingTask}
+                onSubmit={handleSaveTask}
+                onCancel={() => setEditingTask(null)}
+            />
+            <TasksTable onEdit={handleEditTask} />
+        </Container>
     );
 }

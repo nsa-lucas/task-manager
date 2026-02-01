@@ -65,14 +65,6 @@ export const Content = styled.div`
 
     background: var(--violet-light);
 
-    .return-home {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-
-        color: #fff;
-    }
-
     @media (min-width: 1280px) {
         width: 25vw;
     }
@@ -103,6 +95,15 @@ export const Form = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    .icon-home {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        .link-home {
+            color: #fff;
+        }
+    }
 
     .h-form {
         display: flex;
@@ -180,6 +181,15 @@ export const Form = styled.div`
     .toRegister {
         a {
             color: var(--violet);
+        }
+    }
+
+    @media (max-width: 680px) {
+        .icon-home {
+            position: inherit;
+            .link-home {
+                color: var(--violet);
+            }
         }
     }
 `;

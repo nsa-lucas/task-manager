@@ -16,6 +16,7 @@ export default function TasksTable({ onEdit }) {
     const { user } = useAuth();
     const [tasks, setTasks] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
+    const [checked, setChecked] = useState(false);
 
     useEffect(() => {
         async function loadTasks() {
@@ -42,6 +43,7 @@ export default function TasksTable({ onEdit }) {
             .then(() => {
                 toast.success('Tarefas deletadas com sucesso.');
                 setSelectedIds([]);
+                setChecked(false);
             })
             .catch((error) => {
                 toast.warn('Falha ao deletar tarefas.');
@@ -59,21 +61,36 @@ export default function TasksTable({ onEdit }) {
         });
     }
 
+    function selectAllTask() {
+        let all = [];
+
+        if (checked) {
+            setSelectedIds('');
+        } else {
+            setSelectedIds(() => {
+                for (let i = 0; i < tasks.length; i++) {
+                    all.push(tasks[i].id);
+                }
+                return all;
+            });
+        }
+    }
+
     return (
         tasks.length != 0 && (
             <Container>
                 <table className="task-list">
                     <thead>
                         <tr>
-                            <th className="uncheck">
-                                {selectedIds.length > 0 && (
-                                    <SecondayButton
-                                        onClick={() => {
-                                            setSelectedIds('');
-                                        }}
-                                        icon={<X />}
-                                    />
-                                )}
+                            <th>
+                                <input
+                                    checked={checked}
+                                    type="checkbox"
+                                    onChange={() => {
+                                        setChecked(!checked);
+                                        selectAllTask();
+                                    }}
+                                />
                             </th>
                             <th>Tarefa</th>
                             <th>Status</th>
@@ -102,6 +119,11 @@ export default function TasksTable({ onEdit }) {
                                         <span>{task.title}</span>
                                     </td>
                                     <td
+                                        className={
+                                            task.status === 'Pendente'
+                                                ? 'pending'
+                                                : 'completed'
+                                        }
                                         onDoubleClick={() => {
                                             task.status === 'Pendente'
                                                 ? handleStatus(
